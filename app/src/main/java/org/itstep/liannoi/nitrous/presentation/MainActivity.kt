@@ -23,10 +23,44 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        DefaultNotificationService.Channel(getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-            .create()
+        prepareChannel()
+        subscribeStart(prepareIntent(), prepareConnection())
+        subscribeStop()
+        subscribeShow()
+    }
 
-        val serviceConnection: ServiceConnection = object : ServiceConnection {
+    ///////////////////////////////////////////////////////////////////////////
+    // Helpers
+    ///////////////////////////////////////////////////////////////////////////
+
+    private fun subscribeShow() {
+        show_button.clicks()
+            .bindToLifecycle(this)
+            .subscribe(
+                { notificationService.alert() },
+                { Toast.makeText(this, "The service isn't running", Toast.LENGTH_LONG).show() })
+    }
+
+    private fun subscribeStop() {
+        stop_button.clicks()
+            .bindToLifecycle(this)
+            .subscribe {
+                notificationService.stop()
+                Toast.makeText(this, "Notification removed", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun subscribeStart(intent: Intent, serviceConnection: ServiceConnection) {
+        start_button.clicks()
+            .bindToLifecycle(this)
+            .subscribe { bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE) }
+    }
+
+    private fun prepareIntent(): Intent =
+        Intent(this, PresentationNotificationService::class.java)
+
+    private fun prepareConnection(): ServiceConnection =
+        object : ServiceConnection {
 
             override fun onServiceDisconnected(name: ComponentName?) {}
 
@@ -36,24 +70,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val intent = Intent(this, PresentationNotificationService::class.java)
-
-        start_button.clicks()
-            .bindToLifecycle(this)
-            .subscribe { bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE) }
-
-        stop_button.clicks()
-            .bindToLifecycle(this)
-            .subscribe {
-                notificationService.stop()
-                Toast.makeText(this, "Notification removed", Toast.LENGTH_SHORT).show()
-            }
-
-        show_button.clicks()
-            .bindToLifecycle(this)
-            .subscribe(
-                { notificationService.alert() },
-                { Toast.makeText(this, "The service isn't running", Toast.LENGTH_LONG).show() }
-            )
+    private fun prepareChannel() {
+        DefaultNotificationService.Channel(getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+            .create()
     }
 }

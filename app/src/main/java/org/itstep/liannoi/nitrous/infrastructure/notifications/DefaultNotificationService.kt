@@ -11,17 +11,13 @@ import org.itstep.liannoi.nitrous.application.common.notifications.Notifier
 import org.itstep.liannoi.nitrous.application.common.notifications.NotifierChannel
 import org.itstep.liannoi.nitrous.infrastructure.InfrastructureDefaults
 
-class DefaultNotificationService(private val context: Context) : Notifier {
+open class DefaultNotificationService(private val context: Context) : Notifier {
 
     class Channel(private val manager: NotificationManager) : NotifierChannel {
 
         override fun create() {
             manager.createNotificationChannel(prepare())
         }
-
-        ///////////////////////////////////////////////////////////////////////////
-        // Helpers
-        ///////////////////////////////////////////////////////////////////////////
 
         private fun prepare(): NotificationChannel =
             NotificationChannel(
@@ -45,11 +41,7 @@ class DefaultNotificationService(private val context: Context) : Notifier {
         with(NotificationManagerCompat.from(context)) { cancel(notification.id) }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Helpers
-    ///////////////////////////////////////////////////////////////////////////
-
-    private fun prepare(notification: Notification): NotificationCompat.Builder =
+    protected open fun prepare(notification: Notification): NotificationCompat.Builder =
         NotificationCompat.Builder(context, InfrastructureDefaults.DEFAULT_NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_cloud_queue_24)
             .setContentTitle(notification.title)
