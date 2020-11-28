@@ -46,7 +46,7 @@ dependencies {
     implementation 'com.jakewharton.rxbinding4:rxbinding:4.0.0'
 
     // RxLifecycle
-    implementation 'com.trello.rxlifecycle4:rxlifecycle:4.0.0'
+    implementation 'com.trello.rxlifecycle4:rxlifecycle:4.0.2'
     implementation 'com.trello.rxlifecycle4:rxlifecycle-android:4.0.0'
     implementation 'com.trello.rxlifecycle4:rxlifecycle-components:4.0.0'
     implementation 'com.trello.rxlifecycle4:rxlifecycle-components-preference:4.0.0'
